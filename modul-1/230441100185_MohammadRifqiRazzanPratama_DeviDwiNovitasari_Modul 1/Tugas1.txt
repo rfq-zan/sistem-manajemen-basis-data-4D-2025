@@ -1,0 +1,175 @@
+create database TP1;
+
+use TP1;
+
+CREATE TABLE Fakultas(
+id_fakultas INT PRIMARY KEY AUTO_INCREMENT,
+nama_fakultas VARCHAR(25) UNIQUE NOT NULL
+);
+
+CREATE TABLE Prodi(
+id_prodi INT PRIMARY KEY AUTO_INCREMENT,
+nama_prodi VARCHAR(50) UNIQUE NOT NULL,
+id_fakultas INT NOT NULL,
+FOREIGN KEY (id_fakultas) REFERENCES Fakultas(id_fakultas) ON UPDATE CASCADE ON DELETE CASCADE
+);
+
+create table mahasiswa(
+nim bigint primary key auto_increment,
+nama varchar(100) not null,
+email varchar(100) unique NOT NULL,
+id_prodi int NOT NULL,
+id_fakultas int NOT NULL,
+angkatan year NOT NULL,
+foreign key (id_prodi) references Prodi(id_prodi) on update cascade on delete cascade,
+foreign key (id_fakultas) references Fakultas(id_fakultas) on update cascade on delete cascade
+);
+
+create table Dosen(
+nip varchar(20) primary key,
+nama varchar(100) not null,
+id_fakultas int NOT NULL,
+id_prodi int NOT NULL,
+foreign key (id_prodi) references Prodi(id_prodi) on update cascade on delete cascade,
+foreign key (id_fakultas) references Fakultas(id_fakultas) on update cascade on delete cascade
+);
+
+Create table MatKul(
+kode_matkul varchar(10) primary key,
+nama_matkul varchar(50) not null,
+sks int not null,
+id_prodi int not null,
+nip varchar(20) not null,
+foreign key (id_prodi) references Prodi(id_prodi) on update cascade on delete cascade,
+foreign key (nip) references Dosen(nip) on update cascade on delete cascade
+);
+
+create table Krs(
+id_krs int auto_increment primary key,
+nim bigint not null,
+kode_matkul varchar(10) not null,
+semester int not null,
+angkatan year not null,
+nip varchar(20) not null,
+nilai char(2) default null
+);
+
+FOREIGN KEY (nim) REFERENCES Mahasiswa(nim) ON UPDATE CASCADE ON DELETE CASCADE,
+FOREIGN KEY (kode_matkul) REFERENCES MatKul(kode_matkul) ON UPDATE CASCADE ON DELETE CASCADE,
+FOREIGN KEY (nip) REFERENCES Dosen(nip) ON UPDATE CASCADE ON DELETE CASCADE
+
+alter table Krs add constraint fk_nim foreign key (nim) references Mahasiswa(nim);
+alter table Krs add constraint fk_matkul foreign key (kode_matkul) references MatKul(kode_matkul);
+alter table krs add constraint fk_nip foreign key (nip) references Dosen(nip);
+
+insert into Mahasiswa (nim, nama, email, id_prodi, id_fakultas) values
+('230441100087','Andika Kamaluddin','andikakamaluddin974@mgial.com',1,1),
+('210441100185','Mohammad Rifqi Razzan Pratama','rifqirazzans@gmail.com',1,1),
+('220441100023','Firdaus Nur Hidayatullah','firdalabu@gmail.com',1,1),
+('220221100051','Garvin Taufiqulhakim Faaiz','pannt@gmail.com',2,2),
+('210221100093','Bagus Eka Saputra','putrabubblegum@gmail.com',2,2),
+('200221100124','Dimas Andika Jaya Kusuma','dim.andik@gmail.com',2,2),
+('2300014400118','Muhammad Dandy','dandyyy@gmail.com',3,3),
+('2300014400099','Maulidina Avrilea Putri','Aleeolegra@gmail.com',3,3),
+('2100014400112','Andrian Prakasa','Prakasa@gmail.com',3,3),
+('230441100210','Amba El Tukam','Ambatukan@gmail.com',1,1);
+
+insert into Fakultas (nama_fakultas) values
+('Teknik'),
+('Ekonomi dan Bisnis'),
+('Hukum');
+
+insert into Prodi (nama_prodi, id_fakultas) values
+('Sistem Informasi',1),
+('Ekonomi Pembangunan',2),
+('Hukum',3);
+
+insert into Dosen (nip, nama, id_prodi, id_fakultas) values
+('1292114','Prof. Dr. Brazickowaz S.Kom.M.Kom',1,1),
+('1249012','Eipril Foss S.Kom',1,1),
+('2012992','Dr. Andes S.T,M.Kom',1,1),
+('5764576','Gojo Satoru S.E',2,2),
+('0932903','Anakin SKywalker S.E',2,2),
+('0397833','Gryffindor S.E',2,2),
+('3278282','Hermione S.H,M.H',3,3),
+('9103240','Soeradji S.H',3,3),
+('9039320','Darmadji S.H',3,3),
+('2143494','Prof. Dr. Putin S.Kom,M.Kom',1,1);
+
+insert into MatKul (kode_matkul, nama_matkul, sks, id_prodi, nip) values
+('CS101','Pemrograman Berjalan',3,1,'1292114'),
+('CS102','Analisa Proses Matematika',3,1,'1249012'),
+('CS103','Matematika Secret',3,1,'2012992'),
+('CS104','Jaringan Komputasi Algoritma',3,1,'2143494'),
+('MK301','Ekonomi Micro',3,2,'5764576'),
+('MK302','Akuntansi Dasar',3,2,'0932903'),
+('MK303','Manage Duit',3,2,'0397833'),
+('AS501','Hukum Negara',3,3,'3278282'),
+('AS502','Hukum Penjara',3,3,'9103240'),
+('AS503','Negri Ngeri',3,3,'9039320');
+
+INSERT INTO Krs (nim, kode_matkul, semester, angkatan, nip, nilai) VALUES
+-- SISTEM INFOR
+-- Andika Kamaluddin
+('230441100087', 'CS101', 4, 2023, '1292114', 'A'),  
+('230441100087', 'CS102', 4, 2023, '1249012', 'B'),  
+('230441100087', 'CS104', 4, 2023, '2143494', 'A'),  
+
+ -- Mohammad Rifqi Razzan Pratama
+('210441100185', 'CS101', 8, 2021, '1292114', 'B'), 
+('210441100185', 'CS102', 8, 2021, '1249012', 'A'),  
+('210441100185', 'CS103', 8, 2021, '2143494', 'C'),  
+
+-- Firdaus Nur Hidayatullah
+('220441100023', 'CS102', 6, 2022, '1249012', 'A'),  
+('220441100023', 'CS103', 6, 2022, '2143494', 'A'),  
+('220441100023', 'CS104', 6, 2022, '2143494', 'B'),  
+
+ -- Amba El Tukam
+('230441100210', 'CS101', 4, 2023, '1292114', 'B'), 
+('230441100210', 'CS103', 4, 2023, '2143494', 'C'),  
+
+-- EKONOMI BISNIS
+-- Garvin Taufiqulhakim Faaiz
+('220221100051', 'MK301', 4, 2023, '5764576', 'C'),  
+('220221100051', 'MK302', 4, 2023, '0932903', 'B'),  
+('220221100051', 'MK303', 4, 2023, '0397833', 'A'),  
+
+-- Bagus Eka Saputra
+('210221100093', 'MK301', 8, 2021, '5764576', 'B'),  
+('210221100093', 'MK302', 8, 2021, '0932903', 'A'),  
+('210221100093', 'MK303', 8, 2021, '0397833', 'C'),  
+
+-- Dimas Andika Jaya Kusuma
+('200221100124', 'MK301', 10, 2020, '5764576', 'A'),  
+('200221100124', 'MK303', 10, 2020, '0397833', 'A'),  
+
+-- HUKUM
+-- Muhammad Dandy
+('2300014400118', 'AS501', 4, 2023, '3278282', 'B'),  
+('2300014400118', 'AS502', 4, 2023, '9103240', 'C'),  
+
+-- Maulidina Avrilea Putri
+('2300014400099', 'AS502', 8, 2021, '9103240', 'B'),  
+('2300014400099', 'AS503', 8, 2021, '9039320', 'A'),  
+
+-- Andrian Prakasa
+('21000014400112', 'AS501', 6, 2022, '3278282', 'C'),  
+('21000014400112', 'AS503', 6, 2022, '9039320', 'A');  
+
+
+
+alter table RENAME TABLE Krs TO Kartu_Rencana_Studi;
+
+
+update table mahasiswa set nama = 'syafii', email = 'syafii@gmail.com' where nim = '230441100210'; 
+
+alter table krs drop column nilai;
+
+DROP DATABASE TP1;
+
+truncate table Krs;
+
+drop table Krs;
+
+show create table prodi;
